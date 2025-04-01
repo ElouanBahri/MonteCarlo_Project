@@ -8,7 +8,7 @@ This project uses **Python == 3.11**.
 ### 1.1. Virtual environment
 ```bash
 conda env create -f src/environment/conda_dependencies.yml
-conda activate Predicting_crypto
+conda activate MC_project_env
 ```
 
 ### 1.2. Dev guidelines
