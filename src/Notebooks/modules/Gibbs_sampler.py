@@ -11,7 +11,7 @@ def gibbs_step(lattice, alpha, beta):
     L = lattice.shape[0]
     for i in range(L):
         for j in range(L):
-            # Sum of neighboring spins
+            # The use of %L permit to avoid boundaries problems (we have -1%L = L-1)
             S_i = (lattice[(i-1) % L, j] + lattice[(i+1) % L, j] +
                    lattice[i, (j-1) % L] + lattice[i, (j+1) % L])
             
@@ -33,12 +33,3 @@ def plot_lattice(lattice, title="Ising Model Configuration"):
     plt.title(title)
     plt.show()
 
-# Parameters
-L = 20  # Lattice size
-alpha = 0  # No external field
-betas = [0.1, 0.5, 1.5, 2.5]  # Different beta values
-
-# Run and visualize for different beta values
-for beta in betas:
-    final_lattice = run_gibbs(L, alpha, beta, steps=1000)
-    plot_lattice(final_lattice, title=f"Beta = {beta}")
