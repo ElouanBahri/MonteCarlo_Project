@@ -1,0 +1,11 @@
+name: explo-ds
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip=23
+  - pip:
+      - pandas
+      - black
+      - numpy
