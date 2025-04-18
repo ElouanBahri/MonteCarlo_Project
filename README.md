@@ -1,5 +1,5 @@
 
-# ☑ Applied Statistic Project 
+# ☑ MC project
 
 This project uses **Python == 3.11**.
 
