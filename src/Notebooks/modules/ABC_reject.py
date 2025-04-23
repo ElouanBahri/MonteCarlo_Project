@@ -36,11 +36,12 @@ def sufficient_statistics(grid):
 def abc_reject(obs_stats, prior_alpha, prior_beta, n, epsilon, num_samples=1000):
     """ABC-Rejection algorithm to estimate alpha and beta."""
     accepted_params = []
+
     for _ in range(num_samples):
         alpha, beta = np.random.uniform(*prior_alpha), np.random.uniform(*prior_beta)
         sim_grid = ising_model(n, alpha, beta)
         sim_stats = sufficient_statistics(sim_grid)
         distance = abs(obs_stats[0] - sim_stats[0]) + abs(obs_stats[1] - sim_stats[1])
         if distance < epsilon:
-            accepted_params.append((alpha, beta))
+            accepted_params.append((alpha, beta, distance))
     return np.array(accepted_params)

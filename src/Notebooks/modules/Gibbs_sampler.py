@@ -21,7 +21,9 @@ def gibbs_step(lattice, alpha, beta):
             )
 
             # Compute conditional probability
-            p_1 = np.exp(alpha + beta * S_i) / (1 + np.exp(alpha + beta * S_i))
+            p_1 = np.exp(alpha + beta * S_i) / (
+                np.exp(beta * (4 - S_i)) + np.exp(alpha + beta * S_i)
+            )
 
             # Sample new spin
             lattice[i, j] = 1 if np.random.rand() < p_1 else 0
