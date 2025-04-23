@@ -1,34 +1,6 @@
 import numpy as np
-
-
-# Define the Ising model simulation function (same as before)
-def ising_model_simulation(alpha, beta, n):
-    spins = np.random.choice([0, 1], size=n)
-
-    # Metropolis-Hastings step to update the spins
-    for i in range(n):
-        neighbors = [spins[(i - 1) % n], spins[(i + 1) % n]]
-        energy_diff = -alpha + beta * sum([1 for x in neighbors if x == spins[i]])
-        if np.random.rand() < 1 / (1 + np.exp(energy_diff)):
-            spins[i] = 1 - spins[i]
-
-    return spins
-
-
-# Define the summary statistics (same as before)
-def summary_statistics(spins):
-    magnetization = np.sum(spins)
-
-    aligned_neighbors = 0
-    for i in range(len(spins)):
-        left = spins[(i - 1) % len(spins)]
-        right = spins[(i + 1) % len(spins)]
-        if spins[i] == left:
-            aligned_neighbors += 1
-        if spins[i] == right:
-            aligned_neighbors += 1
-
-    return magnetization, aligned_neighbors
+from modules.ABC_reject import sufficient_statistics
+from modules.Gibbs_sampler import run_gibbs
 
 
 # Define the distance function (L2 norm)
@@ -49,10 +21,10 @@ def mcmc_abc_algorithm(N, epsilon, observed_data, n_spins, step_size=0.1):
     theta_current = (np.random.uniform(0, 1), np.random.uniform(0, 1))  # (alpha, beta)
 
     # Initial simulation based on theta(0)
-    z_current = ising_model_simulation(theta_current[0], theta_current[1], n_spins)
+    z_current = run_gibbs(n_spins, theta_current[0], theta_current[1])
 
     # Compute summary statistics for observed data
-    summary_observed = summary_statistics(observed_data)
+    summary_observed = sufficient_statistics(observed_data)
 
     # Initialize list to store samples
     alpha_samples = []
@@ -64,12 +36,10 @@ def mcmc_abc_algorithm(N, epsilon, observed_data, n_spins, step_size=0.1):
         theta_proposed = markov_kernel(theta_current, step_size)
 
         # Step 2: Simulate data based on the proposed theta
-        z_proposed = ising_model_simulation(
-            theta_proposed[0], theta_proposed[1], n_spins
-        )
+        z_proposed = run_gibbs(n_spins, theta_proposed[0], theta_proposed[1])
 
         # Step 3: Compute summary statistics for the proposed data
-        summary_simulated = summary_statistics(z_proposed)
+        summary_simulated = sufficient_statistics(z_proposed)
 
         # Step 4: Compute the distance between summary statistics
         dist = distance_function(summary_simulated, summary_observed)
@@ -86,8 +56,8 @@ def mcmc_abc_algorithm(N, epsilon, observed_data, n_spins, step_size=0.1):
             theta_current = theta_proposed
             z_current = z_proposed
 
-        # Store the accepted parameters
-        alpha_samples.append(theta_current[0])
-        beta_samples.append(theta_current[1])
+            # Store the accepted parameters
+            alpha_samples.append(theta_current[0])
+            beta_samples.append(theta_current[1])
 
     return alpha_samples, beta_samples
