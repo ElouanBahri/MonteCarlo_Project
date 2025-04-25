@@ -7,7 +7,7 @@ This project uses **Python == 3.11**.
 
 ### 1.1. Virtual environment
 ```bash
-s
+conda env create -f src/environment/conda_dependencies.yml
 conda activate MC_project_env
 ```
 
