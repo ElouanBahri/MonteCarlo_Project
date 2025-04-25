@@ -29,7 +29,7 @@ def gibbs_step(lattice, alpha, beta):
             lattice[i, j] = 1 if np.random.rand() < p_1 else 0
 
 
-def run_gibbs(L, alpha, beta, steps=100):
+def run_gibbs(L, alpha, beta, steps=1000):
     """Run the Gibbs sampler for a given number of steps."""
     lattice = initialize_lattice(L)
     for _ in range(steps):

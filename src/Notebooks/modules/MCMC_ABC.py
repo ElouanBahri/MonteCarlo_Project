@@ -1,5 +1,5 @@
 import numpy as np
-from modules.ABC_reject import sufficient_statistics
+from modules.ABC_reject import abc_reject, sufficient_statistics
 from modules.Gibbs_sampler import run_gibbs
 
 
@@ -17,11 +17,26 @@ def markov_kernel(theta_current, step_size=0.1):
 
 # Define the MCMC-ABC algorithm (Algorithm 3)
 def mcmc_abc_algorithm(N, epsilon, observed_data, n_spins, step_size=0.1):
+
+    true_alpha, true_beta = 0.5, 0.8
+    observed_grid = run_gibbs(n_spins, true_alpha, true_alpha, steps=1)
+    # observed_grid = ising_model(n, true_alpha, true_beta)
+    obs_stats = sufficient_statistics(observed_grid)
+
+    theta_samples = abc_reject(
+        obs_stats,
+        prior_alpha=(0, 1),
+        prior_beta=(0, 1),
+        n=n_spins,
+        epsilon=0.5,
+        num_samples=10000,
+    )
+
     # Initial parameters (theta(0)) from prior distribution (uniform for simplicity)
     theta_current = (np.random.uniform(0, 1), np.random.uniform(0, 1))  # (alpha, beta)
 
     # Initial simulation based on theta(0)
-    z_current = run_gibbs(n_spins, theta_current[0], theta_current[1])
+    z_current = run_gibbs(n_spins, theta_current[0], theta_current[1], steps=1)
 
     # Compute summary statistics for observed data
     summary_observed = sufficient_statistics(observed_data)
@@ -52,7 +67,7 @@ def mcmc_abc_algorithm(N, epsilon, observed_data, n_spins, step_size=0.1):
         acceptance_prob = min(1, (1 / (1 + np.exp(dist))) * likelihood_ratio)
 
         # Step 6: Accept or reject based on acceptance probability and distance
-        if u <= acceptance_prob and dist <= epsilon:
+        if dist <= epsilon:
             theta_current = theta_proposed
             z_current = z_proposed
 
