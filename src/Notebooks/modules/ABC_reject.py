@@ -35,7 +35,7 @@ def abc_reject(obs_stats, prior_alpha, prior_beta, n, epsilon, num_samples=1000)
         sim_grid = run_gibbs(n, alpha, beta, steps=1)
         sim_stats = sufficient_statistics(sim_grid)
         distance = abs(obs_stats[0] - sim_stats[0]) + abs(obs_stats[1] - sim_stats[1])
-        print(alpha, beta, distance)
+        # print(alpha, beta, distance)
         if distance < epsilon:
             accepted_params.append((alpha, beta, distance))
     return np.array(accepted_params)
